@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Game_Logo : MonoBehaviour
+public class Game : MonoBehaviour
 {
 
     List<Transform> objects;//get list of objects before they're created
@@ -16,6 +16,8 @@ public class Game_Logo : MonoBehaviour
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
      public float unitsphere;
+
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -91,3 +93,6 @@ public class Game_Logo : MonoBehaviour
         objects.Add(t);
     }
 }
+//-----Data Writing---//
+ 
+
