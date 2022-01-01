@@ -1,15 +1,17 @@
-using System.Collections;
-using System.IO;
+// using System.Collections;
+// using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Game : MonoBehaviour
-{
-
-    List<Transform> objects;//get list of objects before they're created
+public class Game : PersistableObject
+{   
+      public PersistableObject prefab;
+    public PersistentStorage storage;
     //create slot for prefab
-     public Transform prefab;
-     //create keycodes
+   
+     //create keycodes    
+     List<PersistableObject> objects;//get list of objects before they're created
+
      public KeyCode createKey = KeyCode.C;
      public KeyCode newGameKey = KeyCode.N; 
      public KeyCode saveKey = KeyCode.S; 
@@ -33,65 +35,87 @@ public class Game : MonoBehaviour
         }else if(Input.GetKeyDown(newGameKey)){
             BeginNewGame();
         }else if(Input.GetKeyDown(saveKey)){
-            Save();
+            // Save();
+            storage.Save(this);
         }else if(Input.GetKeyDown(loadKey)){
-            Load();
+            // Load();
+            BeginNewGame();
+            storage.Load(this);
         }
         
     }
     string savePath; 
     void Awake(){
-        objects = new List<Transform>();//create a new list on program awake
-        savePath = Application.persistentDataPath;//name 
-    }
-    
-    //create save path and file
-    void Save(){
-        using( 
-            var writer = 
-     new BinaryWriter(File.Open(savePath, FileMode.Create))
-        ){
-            writer.Write(objects.Count);//Save the number of objects in the scene
-            for(int i = 0; i < objects.Count; i++){
-                //--save the positions of the objects--//
-                Transform t = objects[i];
-                writer.Write(t.localPosition.x);
-                writer.Write(t.localPosition.y);
-                writer.Write(t.localPosition.z);
-                //--save the position of the objects--//
-            }
-        }
-     
+        objects = new List<PersistableObject>();//create a new list on program awake
+        // savePath = Application.persistentDataPath;//name 
     }
 
-    void Load(){
-        BeginNewGame();
-        using(
-            var reader = new BinaryReader(File.Open(savePath,FileMode.Open))
-        ){
-            int count = reader.ReadInt32();
-            Vector3 p;
-            p.x = reader.ReadSingle();
-            p.y = reader.ReadSingle();
-            p.z = reader.ReadSingle();
-            Transform t = Instantiate(prefab);
-            t.localPosition = p;
-            objects.Add(t);
+    public override void Save(GameDataWriter writer){
+        writer.Write(objects.Count);
+        for(int i = 0; i < objects.Count; i++){
+            objects[i].Save(writer);
         }
     }
-    void BeginNewGame(){
+
+    public override void Load(GameDataReader reader){
+        var count = reader.ReadInt();
+        for(int i = 0; i < count; i++){
+            PersistableObject o = Instantiate(prefab);
+            o.Load(reader); 
+            objects.Add(o);
+        }
+    }
+
+        void BeginNewGame(){
         for(int i = 0; i < objects.Count; i++){
             Destroy(objects[i].gameObject);
         }
         objects.Clear();
     }
     void CreateObject(){
-        Transform t = Instantiate(prefab);
+        PersistableObject o = Instantiate(prefab);
+        Transform t = o.transform;
         t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
         t.localRotation = Random.rotation; //randomize rotation
-        t.localScale = Vector3.one * Random.Range(0.1f,0.3f);//random scale
-        objects.Add(t);
+        t.localScale = Vector3.one * Random.Range(0.1f,0.5f);//random scale
+        objects.Add(o);
     }
+    
+    //create save path and file
+    // void Save(){
+    //     using( 
+    //         var writer = 
+    //  new BinaryWriter(File.Open(savePath, FileMode.Create))
+    //     ){
+    //         writer.Write(objects.Count);//Save the number of objects in the scene
+    //         for(int i = 0; i < objects.Count; i++){
+    //             //--save the positions of the objects--//
+    //             Transform t = objects[i];
+    //             writer.Write(t.localPosition.x);
+    //             writer.Write(t.localPosition.y);
+    //             writer.Write(t.localPosition.z);
+    //             //--save the position of the objects--//
+    //         }
+    //     }
+     
+    // }
+
+    // void Load(){
+    //     BeginNewGame();
+    //     using(
+    //         var reader = new BinaryReader(File.Open(savePath,FileMode.Open))
+    //     ){
+    //         int count = reader.ReadInt32();
+    //         Vector3 p;
+    //         p.x = reader.ReadSingle();
+    //         p.y = reader.ReadSingle();
+    //         p.z = reader.ReadSingle();
+    //         Transform t = Instantiate(prefab);
+    //         t.localPosition = p;
+    //         objects.Add(t);
+    //     }
+    // }
+
 }
 //-----Data Writing---//
  

@@ -310,6 +310,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1617753652}
+  - component: {fileID: 1617753653}
   m_Layer: 0
   m_Name: Storage
   m_TagString: Untagged
@@ -332,6 +333,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1617753653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617753651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae4cd4bd0a6ca54f8517ea539055a78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1918336822
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +374,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81fe42e735793bc4c81816cef7302c36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 3444753471702635487, guid: fcd25a47ec8369d4ab5b374d1af1146b, type: 3}
+  prefab: {fileID: -4284988119838039153, guid: fcd25a47ec8369d4ab5b374d1af1146b, type: 3}
+  storage: {fileID: 1617753653}
   createKey: 99
   newGameKey: 110
   saveKey: 115
