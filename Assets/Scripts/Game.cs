@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class Game : PersistableObject
 {   
-      public PersistableObject prefab;
+    public ShapeFactory shapeFactory;
+    // public PersistableObject prefab;
     public PersistentStorage storage;
     //create slot for prefab
    
      //create keycodes    
-     List<PersistableObject> objects;//get list of objects before they're created
-
+     
      public KeyCode createKey = KeyCode.C;
      public KeyCode newGameKey = KeyCode.N; 
      public KeyCode saveKey = KeyCode.S; 
@@ -31,9 +31,10 @@ public class Game : PersistableObject
     {
         if(Input.GetKeyDown(createKey)){
             //Instantiate(prefab);
-            CreateObject();
+            CreateShape();
         }else if(Input.GetKeyDown(newGameKey)){
             BeginNewGame();
+            //start game over
         }else if(Input.GetKeyDown(saveKey)){
             // Save();
             storage.Save(this);
@@ -45,40 +46,46 @@ public class Game : PersistableObject
         
     }
     string savePath; 
+
+    List<Shape> shapes;//get list of objects before they're created
+
     void Awake(){
-        objects = new List<PersistableObject>();//create a new list on program awake
+        
+        shapes = new List<Shape>();//create a new list on program awake
         // savePath = Application.persistentDataPath;//name 
     }
 
     public override void Save(GameDataWriter writer){
-        writer.Write(objects.Count);
-        for(int i = 0; i < objects.Count; i++){
-            objects[i].Save(writer);
+        writer.Write(shapes.Count);
+        for(int i = 0; i < shapes.Count; i++){
+            shapes[i].Save(writer);
         }
     }
 
     public override void Load(GameDataReader reader){
         var count = reader.ReadInt();
         for(int i = 0; i < count; i++){
-            PersistableObject o = Instantiate(prefab);
-            o.Load(reader); 
-            objects.Add(o);
+            // PersistableObject o = Instantiate(prefab);
+            Shape instance = shapeFactory.Get(0);
+            instance.Load(reader); 
+            shapes.Add(instance);
         }
     }
 
         void BeginNewGame(){
-        for(int i = 0; i < objects.Count; i++){
-            Destroy(objects[i].gameObject);
+        for(int i = 0; i < shapes.Count; i++){
+            Destroy(shapes[i].gameObject);
         }
-        objects.Clear();
+        shapes.Clear();
     }
-    void CreateObject(){
-        PersistableObject o = Instantiate(prefab);
-        Transform t = o.transform;
+    void CreateShape(){
+        // PersistableObject o = Instantiate(prefab);
+        Shape instance = shapeFactory.GetRandom();//pulls random shape from shapefactory
+        Transform t = instance.transform;
         t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
         t.localRotation = Random.rotation; //randomize rotation
-        t.localScale = Vector3.one * Random.Range(0.1f,0.5f);//random scale
-        objects.Add(o);
+        t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
+        shapes.Add(instance);
     }
     
     //create save path and file
