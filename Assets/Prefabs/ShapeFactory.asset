@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd29c0e9f34b4e41a87cc7d64e2b822, type: 3}
   m_Name: ShapeFactory
   m_EditorClassIdentifier: 
+  materials:
+  - {fileID: 2100000, guid: 1f4f58c0f6de8aa4184aabf9ad0edc9c, type: 2}
+  - {fileID: 2100000, guid: 76cb3d385738a6a42821360ae205d465, type: 2}
+  - {fileID: 2100000, guid: 722823f868a27cd419eed9b3408a9d1c, type: 2}
   prefabs:
-  - {fileID: 38922393274881708, guid: d778c23550ae935419840c8a45d81a64, type: 3}
-  - {fileID: 9146322246691367628, guid: 58376012a786615448aa612656eeaa12, type: 3}
-  - {fileID: 3047576987150325577, guid: 82a7487c20e729846959f77835ca6f91, type: 3}
-  - {fileID: 1368509107309517518, guid: 76370fff6af5a8a4894e2fb002daab31, type: 3}
+  - {fileID: 9211596872006413974, guid: 8edf896206aa61946b22c24c44133ca8, type: 3}
+  - {fileID: 9173531405760052088, guid: 7c6977c87d9db184691b387a1d8f575c, type: 3}
+  - {fileID: 347649646143739381, guid: 4bc4266abedce284ba2aa682c0b8323c, type: 3}
+  - {fileID: 3447281225838741183, guid: 39cbc2aac9294d54d88ce606fbfc9ddd, type: 3}

@@ -17,7 +17,9 @@ public class Game : PersistableObject
      public KeyCode saveKey = KeyCode.S; 
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
+     const int saveVersion = 1;
      public float unitsphere;
+
 
    
     // Start is called before the first frame update
@@ -37,7 +39,7 @@ public class Game : PersistableObject
             //start game over
         }else if(Input.GetKeyDown(saveKey)){
             // Save();
-            storage.Save(this);
+            storage.Save(this, saveVersion);
         }else if(Input.GetKeyDown(loadKey)){
             // Load();
             BeginNewGame();
@@ -56,17 +58,28 @@ public class Game : PersistableObject
     }
 
     public override void Save(GameDataWriter writer){
+        // writer.Write(-saveVersion);
         writer.Write(shapes.Count);
         for(int i = 0; i < shapes.Count; i++){
+            writer.Write(shapes[i].ShapeId);
+            writer.Write(shapes[i].MaterialId);
             shapes[i].Save(writer);
         }
     }
 
     public override void Load(GameDataReader reader){
-        var count = reader.ReadInt();
+        int version = reader.Version;
+        int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
+
+        if(version > saveVersion){
+            Debug.LogError("Unsupported future save version" + version);
+            return;
+        }
         for(int i = 0; i < count; i++){
             // PersistableObject o = Instantiate(prefab);
-            Shape instance = shapeFactory.Get(0);
+            int shapeId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+            int materialId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+            Shape instance = shapeFactory.Get(shapeId, materialId);
             instance.Load(reader); 
             shapes.Add(instance);
         }
@@ -85,6 +98,7 @@ public class Game : PersistableObject
         t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
         t.localRotation = Random.rotation; //randomize rotation
         t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
+        instance.SetColor(Random.ColorHSV(0f,1f,0.5f,1f,0.25f,1f,1f,1f)); // ColorHSV parameters are as follows(hueMin, hueMax,saturationMin,saturationMax,valueMin, valueMax,alphaMin, alphaMax)
         shapes.Add(instance);
     }
     
