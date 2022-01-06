@@ -17,10 +17,14 @@ public class Game : PersistableObject
      public KeyCode saveKey = KeyCode.S; 
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
+     public KeyCode destroyKey = KeyCode.X; 
      const int saveVersion = 1;
      public float unitsphere;
+     public float CreationSpeed { get; set; }
+     public float DestructionSpeed { get; set; }
 
-
+    float creationProgress;
+     
    
     // Start is called before the first frame update
     void Start()
@@ -44,6 +48,12 @@ public class Game : PersistableObject
             // Load();
             BeginNewGame();
             storage.Load(this);
+        }
+
+        creationProgress += Time.deltaTime * CreationSpeed;
+        while(creationProgress >= 1f){
+            creationProgress -= 1f;
+            CreateShape();
         }
         
     }
@@ -90,6 +100,16 @@ public class Game : PersistableObject
             Destroy(shapes[i].gameObject);
         }
         shapes.Clear();
+    }
+
+    void DestroyShape(){
+        if(shapes.Count> 0){
+        int index = Random.Range(0, shapes.Count);
+        Destroy(shapes[index].gameObject);
+        int lastIndex = shapes.Count - 1;
+        shapes[index] = shapes[lastIndex];
+        shapes.RemoveAt(lastIndex);
+        }
     }
     void CreateShape(){
         // PersistableObject o = Instantiate(prefab);
