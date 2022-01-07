@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd29c0e9f34b4e41a87cc7d64e2b822, type: 3}
   m_Name: ShapeFactory
   m_EditorClassIdentifier: 
+  recycle: 1
   materials:
   - {fileID: 2100000, guid: 1f4f58c0f6de8aa4184aabf9ad0edc9c, type: 2}
   - {fileID: 2100000, guid: 76cb3d385738a6a42821360ae205d465, type: 2}

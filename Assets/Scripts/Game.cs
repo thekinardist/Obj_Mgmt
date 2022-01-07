@@ -23,7 +23,7 @@ public class Game : PersistableObject
      public float CreationSpeed { get; set; }
      public float DestructionSpeed { get; set; }
 
-    float creationProgress;
+    float creationProgress, destructionProgress;
      
    
     // Start is called before the first frame update
@@ -54,6 +54,11 @@ public class Game : PersistableObject
         while(creationProgress >= 1f){
             creationProgress -= 1f;
             CreateShape();
+        }
+        destructionProgress += Time.deltaTime * DestructionSpeed;
+        while(destructionProgress >= 1f){
+            destructionProgress -= 1f;
+            DestroyShape();
         }
         
     }
@@ -105,7 +110,8 @@ public class Game : PersistableObject
     void DestroyShape(){
         if(shapes.Count> 0){
         int index = Random.Range(0, shapes.Count);
-        Destroy(shapes[index].gameObject);
+        // Destroy(shapes[index].gameObject);
+        shapeFactory.Reclaim(shapes[index]);
         int lastIndex = shapes.Count - 1;
         shapes[index] = shapes[lastIndex];
         shapes.RemoveAt(lastIndex);
