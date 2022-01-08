@@ -1,7 +1,9 @@
 // using System.Collections;
 // using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : PersistableObject
 {   
@@ -18,20 +20,55 @@ public class Game : PersistableObject
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
      public KeyCode destroyKey = KeyCode.X; 
-     const int saveVersion = 1;
+     const int saveVersion = 2;
      public float unitsphere;
      public float CreationSpeed { get; set; }
      public float DestructionSpeed { get; set; }
+     public int levelCount;
 
-    float creationProgress, destructionProgress;
-     
+       float creationProgress, destructionProgress;
+       int loadedLevelBuildIndex;  
    
-    // Start is called before the first frame update
-    void Start()
-    {
-         
+    // void Awake(){
+        void Start(){
+        shapes = new List<Shape>();//create a new list on program awake
+        // savePath = Application.persistentDataPath;//name
+        // LoadLevel();
+        if(Application.isEditor){
+        // Scene loadedLevel = SceneManager.GetSceneByName("Level_1");
+        // if(loadedLevel.isLoaded){
+        //     SceneManager.SetActiveScene(loadedLevel);
+        //     return;
+        //     }
+        for(int i = 0; i < SceneManager.sceneCount; i++){
+            Scene loadedScene = SceneManager.GetSceneAt(i);
+            if(loadedScene.name.Contains("Level")){
+                SceneManager.SetActiveScene(loadedScene);
+                loadedLevelBuildIndex = loadedScene.buildIndex;
+                return;
+                }
+            }
+        }
+        StartCoroutine(LoadLevel(1));
     }
 
+    IEnumerator LoadLevel(int levelBuildIndex){
+        // SceneManager.LoadScene("Level_1", LoadSceneMode.Additive);
+        // yield return null;
+        enabled = false;
+        if(loadedLevelBuildIndex > 0){
+            yield return SceneManager.UnloadSceneAsync(loadedLevelBuildIndex);
+        }
+        yield return SceneManager.LoadSceneAsync(
+            levelBuildIndex, LoadSceneMode.Additive
+        );//loads scene asyncronously preventing the game fSrom freezing while loading
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(levelBuildIndex));
+        loadedLevelBuildIndex = levelBuildIndex;
+        enabled = true;
+    }//this is prohibiting user input while loading is happening; Normally there would be a loading screen
+
+    // Start is called before the first frame update
+ 
     // Update is called once per frame
     void Update()
     {
@@ -48,9 +85,16 @@ public class Game : PersistableObject
             // Load();
             BeginNewGame();
             storage.Load(this);
-        }
-
-        creationProgress += Time.deltaTime * CreationSpeed;
+        } else{
+            for(int i = 1; i <= levelCount; i++){
+                if(Input.GetKeyDown(KeyCode.Alpha0 + i)){
+                    BeginNewGame();
+                    StartCoroutine(LoadLevel(i));
+                    return;
+                }           
+            }
+        }//allows for loading level using alpa numeric keypad
+         creationProgress += Time.deltaTime * CreationSpeed;
         while(creationProgress >= 1f){
             creationProgress -= 1f;
             CreateShape();
@@ -60,21 +104,20 @@ public class Game : PersistableObject
             destructionProgress -= 1f;
             DestroyShape();
         }
-        
     }
+    
+
+    
+
+
     string savePath; 
 
     List<Shape> shapes;//get list of objects before they're created
 
-    void Awake(){
-        
-        shapes = new List<Shape>();//create a new list on program awake
-        // savePath = Application.persistentDataPath;//name 
-    }
-
     public override void Save(GameDataWriter writer){
         // writer.Write(-saveVersion);
         writer.Write(shapes.Count);
+        writer.Write(loadedLevelBuildIndex);
         for(int i = 0; i < shapes.Count; i++){
             writer.Write(shapes[i].ShapeId);
             writer.Write(shapes[i].MaterialId);
@@ -85,7 +128,7 @@ public class Game : PersistableObject
     public override void Load(GameDataReader reader){
         int version = reader.Version;
         int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
-
+        StartCoroutine(LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt()));
         if(version > saveVersion){
             Debug.LogError("Unsupported future save version" + version);
             return;

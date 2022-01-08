@@ -1,6 +1,6 @@
-
 using System.Collections.Generic;
 using UnityEngine; 
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu] //Adds entry for it to Unity's Menu allowing you to create it using the dropdown
 public class ShapeFactory : ScriptableObject{
@@ -16,11 +16,28 @@ public class ShapeFactory : ScriptableObject{
 
     List<Shape>[] pools;
 
+    Scene poolScene;
+
     void CreatePools(){
         pools = new List<Shape>[prefabs.Length];
         for(int i = 0; i < pools.Length; i++){
             pools[i] = new List<Shape>();
         }
+        if(Application.isEditor){
+        poolScene = SceneManager.GetSceneByName(name);
+    
+        if(poolScene.isLoaded){
+            GameObject[] rootObjects = poolScene.GetRootGameObjects();
+            for(int i = 0; i < rootObjects.Length; i++){
+                Shape pooledShape = rootObjects[i].GetComponent<Shape>();
+                if(!pooledShape.gameObject.activeSelf){
+                    pools[pooledShape.ShapeId].Add(pooledShape);
+                }//checks whether the shape is active
+            }
+            return;
+         }
+        poolScene = SceneManager.CreateScene(name);//creates a scene when we go into play mode
+    }
     }
 
     public Shape Get(int shapeId = 0, int materialId = 0){
@@ -40,6 +57,9 @@ public class ShapeFactory : ScriptableObject{
             }else{
                 instance = Instantiate(prefabs[shapeId]);
                 instance.ShapeId = shapeId;
+                SceneManager.MoveGameObjectToScene(
+                    instance.gameObject, poolScene
+                );//moves created objects into the created scene
             }
         }
         else{
