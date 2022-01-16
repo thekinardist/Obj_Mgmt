@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class Game : PersistableObject
 {   
-    public ShapeFactory shapeFactory;
+    // public ShapeFactory shapeFactory;
+    [SerializeField] ShapeFactory shapeFactory; 
     // public PersistableObject prefab;
     public PersistentStorage storage;
     //create slot for prefab
@@ -21,16 +22,22 @@ public class Game : PersistableObject
      //create keycodes
      public KeyCode destroyKey = KeyCode.X; 
      const int saveVersion = 2;
-     public float unitsphere;
+     //public float unitsphere;
      public float CreationSpeed { get; set; }
      public float DestructionSpeed { get; set; }
      public int levelCount;
+
+    //  public SpawnZone spawnZone;
+    public SpawnZone SpawnZoneOfLevel{ get; set; }
+    public static Game Instance { get; private set; }
 
        float creationProgress, destructionProgress;
        int loadedLevelBuildIndex;  
    
     // void Awake(){
-        void Start(){
+    void Start(){
+
+        Instance = this; 
         shapes = new List<Shape>();//create a new list on program awake
         // savePath = Application.persistentDataPath;//name
         // LoadLevel();
@@ -143,7 +150,7 @@ public class Game : PersistableObject
         }
     }
 
-        void BeginNewGame(){
+    void BeginNewGame(){
         for(int i = 0; i < shapes.Count; i++){
             Destroy(shapes[i].gameObject);
         }
@@ -164,11 +171,16 @@ public class Game : PersistableObject
         // PersistableObject o = Instantiate(prefab);
         Shape instance = shapeFactory.GetRandom();//pulls random shape from shapefactory
         Transform t = instance.transform;
-        t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
+        // t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
+        t.localPosition = SpawnZoneOfLevel.SpawnPoint;
         t.localRotation = Random.rotation; //randomize rotation
         t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
         instance.SetColor(Random.ColorHSV(0f,1f,0.5f,1f,0.25f,1f,1f,1f)); // ColorHSV parameters are as follows(hueMin, hueMax,saturationMin,saturationMax,valueMin, valueMax,alphaMin, alphaMax)
         shapes.Add(instance);
+    }
+
+    void OnEnable (){
+        Instance = this;
     }
     
     //create save path and file
