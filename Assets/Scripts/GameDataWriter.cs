@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class GameDataWriter{
     BinaryWriter writer;
+
+    public void Write(Random.State value){
+        writer.Write(JsonUtility.ToJson(value));
+    }
     public GameDataWriter(BinaryWriter writer){
     this.writer = writer;
     }

@@ -5,6 +5,10 @@ using UnityEngine;
 public class GameDataReader{
     public int Version {get;}
     BinaryReader reader;
+
+    public Random.State ReadRandomState(){
+        return JsonUtility.FromJson<Random.State>(reader.ReadString());
+    }
     public GameDataReader (BinaryReader reader, int version){
         this.reader = reader;
         this.Version = version; 

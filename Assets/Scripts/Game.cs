@@ -4,13 +4,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI; 
+
+[DisallowMultipleComponent]
 
 public class Game : PersistableObject
 {   
     // public ShapeFactory shapeFactory;
-    [SerializeField] ShapeFactory shapeFactory; 
+    [SerializeField] ShapeFactory shapeFactory;
+    [SerializeField] bool reseedOnLoad;//creates the option to reseed the random range chosen at the beginning
+    [SerializeField] Slider creationSpeedSlider;
+    [SerializeField] Slider destructionSpeedSlider;
+
     // public PersistableObject prefab;
     public PersistentStorage storage;
+    
+    Random.State mainRandomState;
     //create slot for prefab
    
      //create keycodes    
@@ -21,23 +30,27 @@ public class Game : PersistableObject
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
      public KeyCode destroyKey = KeyCode.X; 
-     const int saveVersion = 2;
+     const int saveVersion = 3;
      //public float unitsphere;
      public float CreationSpeed { get; set; }
      public float DestructionSpeed { get; set; }
      public int levelCount;
 
     //  public SpawnZone spawnZone;
-    public SpawnZone SpawnZoneOfLevel{ get; set; }
-    public static Game Instance { get; private set; }
+    //  public SpawnZone SpawnZoneOfLevel{ get; set; }
+     public static Game Instance { get; private set; }
 
-       float creationProgress, destructionProgress;
-       int loadedLevelBuildIndex;  
+     float creationProgress, destructionProgress;
+     int loadedLevelBuildIndex;  
    
-    // void Awake(){
+    // void Awake(){}
+
+
     void Start(){
 
-        Instance = this; 
+        mainRandomState = Random.state;
+
+        // Instance = this; 
         shapes = new List<Shape>();//create a new list on program awake
         // savePath = Application.persistentDataPath;//name
         // LoadLevel();
@@ -56,6 +69,7 @@ public class Game : PersistableObject
                 }
             }
         }
+        BeginNewGame();
         StartCoroutine(LoadLevel(1));
     }
 
@@ -84,6 +98,7 @@ public class Game : PersistableObject
             CreateShape();
         }else if(Input.GetKeyDown(newGameKey)){
             BeginNewGame();
+            StartCoroutine(LoadLevel(loadedLevelBuildIndex));
             //start game over
         }else if(Input.GetKeyDown(saveKey)){
             // Save();
@@ -100,8 +115,10 @@ public class Game : PersistableObject
                     return;
                 }           
             }
-        }//allows for loading level using alpa numeric keypad
-         creationProgress += Time.deltaTime * CreationSpeed;
+        }
+    }//allows for loading level using alpa numeric keypad
+        void  FixedUpdate(){
+        creationProgress += Time.deltaTime * CreationSpeed;
         while(creationProgress >= 1f){
             creationProgress -= 1f;
             CreateShape();
@@ -113,7 +130,7 @@ public class Game : PersistableObject
         }
     }
     
-
+    
     
 
 
@@ -124,7 +141,13 @@ public class Game : PersistableObject
     public override void Save(GameDataWriter writer){
         // writer.Write(-saveVersion);
         writer.Write(shapes.Count);
+        writer.Write(Random.state);
+        writer.Write(CreationSpeed); 
+        writer.Write(creationProgress);
+        writer.Write(DestructionSpeed);  
+        writer.Write(destructionProgress);
         writer.Write(loadedLevelBuildIndex);
+        GameLevel.Current.Save(writer); 
         for(int i = 0; i < shapes.Count; i++){
             writer.Write(shapes[i].ShapeId);
             writer.Write(shapes[i].MaterialId);
@@ -132,25 +155,77 @@ public class Game : PersistableObject
         }
     }
 
-    public override void Load(GameDataReader reader){
-        int version = reader.Version;
-        int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
-        StartCoroutine(LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt()));
-        if(version > saveVersion){
-            Debug.LogError("Unsupported future save version" + version);
-            return;
+    public override void Load (GameDataReader reader) {
+		int version = reader.Version;
+		if (version > saveVersion) {
+			Debug.LogError("Unsupported future save version " + version);
+			return;
+		}
+		StartCoroutine(LoadGame(reader));
+	}
+
+	IEnumerator LoadGame (GameDataReader reader) {
+		int version = reader.Version;
+		int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
+
+		if (version >= 3) {
+			Random.State state = reader.ReadRandomState();
+			if (!reseedOnLoad) {
+				Random.state = state;
+			}
+            creationSpeedSlider.value = CreationSpeed = reader.ReadFloat();
+            creationProgress = reader.ReadFloat();
+            destructionSpeedSlider.value = DestructionSpeed = reader.ReadFloat();  
+            destructionProgress = reader.ReadFloat(); 
+		}
+
+                // StartCoroutine(LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt()));
+        yield return LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt());
+        if(version >= 3){
+            GameLevel.Current.Load(reader);
         }
-        for(int i = 0; i < count; i++){
-            // PersistableObject o = Instantiate(prefab);
-            int shapeId = (int)version > 0 ? (int)reader.ReadInt() : 0;
-            int materialId = (int)version > 0 ? (int)reader.ReadInt() : 0;
-            Shape instance = shapeFactory.Get(shapeId, materialId);
-            instance.Load(reader); 
-            shapes.Add(instance);
-        }
-    }
+		for (int i = 0; i < count; i++) {
+			int shapeId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+			int materialId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+			Shape instance = shapeFactory.Get(shapeId, materialId);
+			instance.Load(reader);
+			shapes.Add(instance);
+		}
+	}
+    // public override void Load(GameDataReader reader){
+    //     int version = reader.Version;
+    //     int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
+    //     if(version >= 3){
+    //         Random.State state = reader.ReadRandomState();
+    //         if(!reseedOnLoad){
+    //             Random.state = state;
+    //         }
+    //     }
+    //     StartCoroutine(LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt()));
+    //     if(version > saveVersion){
+    //         Debug.LogError("Unsupported future save version" + version);
+    //         return;
+    //     }
+    //     for(int i = 0; i < count; i++){
+    //         // PersistableObject o = Instantiate(prefab);
+    //         int shapeId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+    //         int materialId = (int)version > 0 ? (int)reader.ReadInt() : 0;
+    //         Shape instance = shapeFactory.Get(shapeId, materialId);
+    //         instance.Load(reader); 
+    //         shapes.Add(instance);
+    //     }
+    // }
 
     void BeginNewGame(){
+        Random.state = mainRandomState; 
+        int seed = Random.Range(0,int.MaxValue) ^ (int)Time.unscaledTime; 
+        mainRandomState = Random.state;
+        Random.InitState(seed);
+
+    
+        creationSpeedSlider.value = CreationSpeed = 0;
+        destructionSpeedSlider.value = DestructionSpeed = 0;;
+
         for(int i = 0; i < shapes.Count; i++){
             Destroy(shapes[i].gameObject);
         }
@@ -172,16 +247,16 @@ public class Game : PersistableObject
         Shape instance = shapeFactory.GetRandom();//pulls random shape from shapefactory
         Transform t = instance.transform;
         // t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
-        t.localPosition = SpawnZoneOfLevel.SpawnPoint;
+        t.localPosition = GameLevel.Current.SpawnPoint;
         t.localRotation = Random.rotation; //randomize rotation
         t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
         instance.SetColor(Random.ColorHSV(0f,1f,0.5f,1f,0.25f,1f,1f,1f)); // ColorHSV parameters are as follows(hueMin, hueMax,saturationMin,saturationMax,valueMin, valueMax,alphaMin, alphaMax)
         shapes.Add(instance);
     }
 
-    void OnEnable (){
-        Instance = this;
-    }
+    // void OnEnable (){
+    //     Instance = this;
+    // }
     
     //create save path and file
     // void Save(){
