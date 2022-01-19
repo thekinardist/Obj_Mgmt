@@ -246,12 +246,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMovementDirection: 2
-  spawnSpeed:
-    min: 1.5
-    max: 2.5
-  angluarVelMin: 0
-  angularVelMax: 90
+  spawnConfig:
+    movementDirection: 0
+    speed:
+      min: 0
+      max: 0
+    angularSpeed:
+      min: 2
+      max: 4
+    scale:
+      min: 0.5
+      max: 2
+    color:
+      hue:
+        min: 0.2306925
+        max: 0.2306925
+      saturation:
+        min: 0
+        max: 1
+      value:
+        min: 0
+        max: 0.49385318
   surfaceOnly: 1
 --- !u!4 &1346512334
 Transform:

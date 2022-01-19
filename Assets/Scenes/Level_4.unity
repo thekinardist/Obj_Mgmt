@@ -167,12 +167,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMovementDirection: 0
-  spawnSpeed:
-    min: 1.5
-    max: 2.5
-  angluarVelMin: 0
-  angularVelMax: 90
+  spawnConfig:
+    movementDirection: 0
+    speed:
+      min: 0
+      max: 0
+    angularSpeed:
+      min: 0
+      max: 0
+    scale:
+      min: 0
+      max: 0
+    color:
+      hue:
+        min: 0
+        max: 0
+      saturation:
+        min: 0
+        max: 0
+      value:
+        min: 0
+        max: 0
   surfaceOnly: 1
 --- !u!1 &932500211
 GameObject:
@@ -218,12 +233,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMovementDirection: 0
-  spawnSpeed:
-    min: 1.5
-    max: 2.5
-  angluarVelMin: 0
-  angularVelMax: 90
+  spawnConfig:
+    movementDirection: 0
+    speed:
+      min: 0
+      max: 3
+    angularSpeed:
+      min: 0
+      max: 90
+    scale:
+      min: 0.5
+      max: 3
+    color:
+      hue:
+        min: 0
+        max: 0.5568981
+      saturation:
+        min: 0
+        max: 0.40979308
+      value:
+        min: 0
+        max: 0.38877806
   surfaceOnly: 1
 --- !u!1 &1223248854
 GameObject:
@@ -365,16 +395,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 826d89a81ff4ff248a402e82ba755212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMovementDirection: 0
-  spawnSpeed:
-    min: 1.5
-    max: 2.5
-  angluarVelMin: 0
-  angularVelMax: 90
+  spawnConfig:
+    movementDirection: 2
+    speed:
+      min: 3
+      max: 5
+    angularSpeed:
+      min: 0
+      max: 90
+    scale:
+      min: 0.5
+      max: 3
+    color:
+      hue:
+        min: 0
+        max: 0.4833457
+      saturation:
+        min: 0
+        max: 0.7460334
+      value:
+        min: 0
+        max: 0.4833457
   spawnZones:
   - {fileID: 885156106}
   - {fileID: 932500213}
   sequential: 1
+  overrideConfig: 1
 --- !u!1 &1598878194
 GameObject:
   m_ObjectHideFlags: 0
