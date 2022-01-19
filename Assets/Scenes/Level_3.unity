@@ -308,6 +308,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 826d89a81ff4ff248a402e82ba755212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   spawnZones:
   - {fileID: 551032999}
   - {fileID: 501301040}
@@ -343,6 +349,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc66b56a3e9a6c848ae4ffad2c11452d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 1
 --- !u!4 &501301041
 Transform:
@@ -388,6 +400,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc66b56a3e9a6c848ae4ffad2c11452d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 0
 --- !u!4 &551033000
 Transform:
@@ -433,6 +451,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 0
 --- !u!4 &1293685411
 Transform:
@@ -443,7 +467,7 @@ Transform:
   m_GameObject: {fileID: 1293685409}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 20}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -478,6 +502,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 1
 --- !u!4 &1593623522
 Transform:
@@ -488,7 +518,7 @@ Transform:
   m_GameObject: {fileID: 1593623520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -20}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

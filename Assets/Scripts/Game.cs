@@ -30,7 +30,7 @@ public class Game : PersistableObject
      public KeyCode loadKey = KeyCode.L;
      //create keycodes
      public KeyCode destroyKey = KeyCode.X; 
-     const int saveVersion = 3;
+     const int saveVersion = 4;
      //public float unitsphere;
      public float CreationSpeed { get; set; }
      public float DestructionSpeed { get; set; }
@@ -118,6 +118,9 @@ public class Game : PersistableObject
         }
     }//allows for loading level using alpa numeric keypad
         void  FixedUpdate(){
+            for(int i = 0; i < shapes.Count; i++){
+                shapes[i].GameUpdate();
+            }
         creationProgress += Time.deltaTime * CreationSpeed;
         while(creationProgress >= 1f){
             creationProgress -= 1f;
@@ -192,29 +195,7 @@ public class Game : PersistableObject
 			shapes.Add(instance);
 		}
 	}
-    // public override void Load(GameDataReader reader){
-    //     int version = reader.Version;
-    //     int count = (int)version <= 0 ? (int)-version : (int)reader.ReadInt();
-    //     if(version >= 3){
-    //         Random.State state = reader.ReadRandomState();
-    //         if(!reseedOnLoad){
-    //             Random.state = state;
-    //         }
-    //     }
-    //     StartCoroutine(LoadLevel((int)version < 2 ? 1 : (int)reader.ReadInt()));
-    //     if(version > saveVersion){
-    //         Debug.LogError("Unsupported future save version" + version);
-    //         return;
-    //     }
-    //     for(int i = 0; i < count; i++){
-    //         // PersistableObject o = Instantiate(prefab);
-    //         int shapeId = (int)version > 0 ? (int)reader.ReadInt() : 0;
-    //         int materialId = (int)version > 0 ? (int)reader.ReadInt() : 0;
-    //         Shape instance = shapeFactory.Get(shapeId, materialId);
-    //         instance.Load(reader); 
-    //         shapes.Add(instance);
-    //     }
-    // }
+ 
 
     void BeginNewGame(){
         Random.state = mainRandomState; 
@@ -245,12 +226,15 @@ public class Game : PersistableObject
     void CreateShape(){
         // PersistableObject o = Instantiate(prefab);
         Shape instance = shapeFactory.GetRandom();//pulls random shape from shapefactory
-        Transform t = instance.transform;
-        // t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
-        t.localPosition = GameLevel.Current.SpawnPoint;
-        t.localRotation = Random.rotation; //randomize rotation
-        t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
-        instance.SetColor(Random.ColorHSV(0f,1f,0.5f,1f,0.25f,1f,1f,1f)); // ColorHSV parameters are as follows(hueMin, hueMax,saturationMin,saturationMax,valueMin, valueMax,alphaMin, alphaMax)
+        // Transform t = instance.transform;
+        // // t.localPosition = Random.insideUnitSphere * unitsphere;//place prefab in random point inside sphere
+        // t.localPosition = GameLevel.Current.SpawnPoint;
+        // t.localRotation = Random.rotation; //randomize rotation
+        // t.localScale = Vector3.one * Random.Range(0.5f,1.0f);//random scale
+        // instance.SetColor(Random.ColorHSV(0f,1f,0.5f,1f,0.25f,1f,1f,1f)); // ColorHSV parameters are as follows(hueMin, hueMax,saturationMin,saturationMax,valueMin, valueMax,alphaMin, alphaMax)
+        // instance.AngularVelocity = Random.onUnitSphere * Random.Range(0f,90f);
+        // instance.Velocity = Random.onUnitSphere * Random.Range(0f, 2f);
+        GameLevel.Current.ConfigureSpawn(instance);
         shapes.Add(instance);
     }
 

@@ -22,10 +22,13 @@ public class GameLevel : PersistableObject
     //     Game.Instance.SpawnZoneOfLevel = spawnZone;
     // }
 
-    public Vector3 SpawnPoint{
-        get{
-            return spawnZone.SpawnPoint;
-        }
+    // public Vector3 SpawnPoint{
+    //     get{
+    //         return spawnZone.SpawnPoint;
+    //     }
+    // }
+    public void ConfigureSpawn(Shape shape){
+        spawnZone.ConfigureSpawn(shape);
     }
 
     public override void Save(GameDataWriter writer){

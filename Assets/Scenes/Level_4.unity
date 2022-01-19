@@ -167,6 +167,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 1
 --- !u!1 &932500211
 GameObject:
@@ -212,6 +218,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f18bcdd33e783f419a34b9a2a8f46db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   surfaceOnly: 1
 --- !u!1 &1223248854
 GameObject:
@@ -353,6 +365,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 826d89a81ff4ff248a402e82ba755212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnMovementDirection: 0
+  spawnSpeed:
+    min: 1.5
+    max: 2.5
+  angluarVelMin: 0
+  angularVelMax: 90
   spawnZones:
   - {fileID: 885156106}
   - {fileID: 932500213}
