@@ -16,6 +16,8 @@ public class Shape : PersistableObject {
     void Awake(){
         meshRenderer = GetComponent<MeshRenderer>();//Grabs the mesh renderer of each shape
     }
+
+
     public void GameUpdate(){
         transform.Rotate(AngularVelocity * Time.deltaTime);
         transform.localPosition += Velocity * Time.deltaTime;
